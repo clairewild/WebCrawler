@@ -53,6 +53,6 @@ end
 
 # str = open_url("https://www.google.com/")
 # p find_links(str)
-
-crawl(["http://www.dialahuman.com/"], 1)
 # p find_numbers("603 277 0187 sk hi my name is 603-487-4859 claire (603) 488-6845")
+
+crawl(["http://www.google.com"])
