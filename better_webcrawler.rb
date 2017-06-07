@@ -1,7 +1,6 @@
 require 'open-uri'
 require 'nokogiri'
 
-# TODO: deal with 404 errors
 # TODO: deal with redirects
 # TODO: actually search for something!
 
@@ -10,7 +9,13 @@ def read_url_file
 end
 
 def nokogiri_doc(path)
-  Nokogiri::HTML(open(path)) # 404 error!
+  begin
+    Nokogiri::HTML(open(path))
+  rescue OpenURI::HTTPError => e
+    if e.message == "404 Not Found"
+      return nil
+    end
+  end
 end
 
 def find_links(doc, path)
@@ -31,7 +36,9 @@ def crawl(max_depth = 3)
       visited[path] = true
       puts "Searching #{path}"
 
-      links = find_links(nokogiri_doc(path), path)
+      doc = nokogiri_doc(path)
+      next if doc.nil?
+      links = find_links(doc, path)
       next if links.nil?
       links.reject! { |link| visited[link] == true }
       next_depth_urls.push(*links)
